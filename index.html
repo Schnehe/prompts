@@ -1,119 +1,145 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>Prompt Collection — Categorized</title>
-<style>
-  :root{
-    --bg:#22141c;
-    --bg2:#261a27;
-    --card:#fafafd;
-    --accent:#2a1921;      /* wine/burgundy */
-    --muted:#ccc;          /* heller grauton */
-    --success:#059669;
-    --radius:12px;
-    --gap:12px;
-    font-family: Inter, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-  }
-  body{
-    margin:0;
-    background:radial-gradient(ellipse at 50% 30%, #291b22 0px, #22141c 100%);
-    padding:18px;
-    -webkit-font-smoothing:antialiased;
-    min-height:100vh;
-    color:#fff; /* Texte weiß */
-  }
-  .container{
-    max-width:1000px;
-    margin:0 auto;
-  }
-  header{ display:flex; gap:12px; align-items:center; margin-bottom:14px; }
-  h1{ margin:0; font-size:1.2rem; color:#fff;}
-  p.lead{ margin:0; color:#ddd; font-size:0.95rem; }
-
-  .controls{ display:flex; gap:8px; margin:12px 0 18px 0; flex-wrap:wrap; }
-  .btn{ 
-    background:var(--accent); 
-    color:#fff; 
-    border:0; 
-    padding:9px 12px; 
-    border-radius:10px; 
-    font-weight:600; 
-    cursor:pointer;
-    box-shadow: 0 2px 8px rgba(42, 25, 33, 0.08);
-    transition:background 0.2s, color 0.2s;
-  }
-  .btn:hover{ background:#441e2e; }
-  .btn.ghost{ 
-    background:transparent; 
-    color:#fff; 
-    border:1px solid rgba(255,255,255,0.3); 
-    box-shadow:none;
-  }
-  .btn.ghost:hover{ background:rgba(255,255,255,0.1);}
-  input.search{ 
-    padding:10px 12px; 
-    border-radius:10px; 
-    border:1px solid #e1e0e4; 
-    min-width:160px;
-    background:#fff;
-    color:#22141c;
-  }
-  select.filter{ 
-    padding:10px 12px; 
-    border-radius:10px; 
-    border:1px solid #e1e0e4; 
-    background:#fff;
-    color:#22141c;
-  }
-
-  .category{ margin-bottom:16px; }
-  .cat-header{ display:flex; justify-content:space-between; align-items:center; gap:10px; }
-  .cat-title{ font-weight:800; font-size:1rem; color:#fff;}
-  .cat-controls{ display:flex; gap:8px; }
-
-  .list{ margin-top:10px; display:grid; grid-template-columns:repeat(auto-fill,minmax(300px,1fr)); gap:12px; }
-  .card{ background:var(--card); border-radius:12px; padding:12px; box-shadow:0 6px 18px rgba(20,12,16,0.08); display:flex; flex-direction:column; gap:8px; color:#22141c; }
-  .prompt-text{ white-space:pre-wrap; background:#ede6eb; padding:10px; border-radius:8px; font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, "Roboto Mono", "Courier New", monospace; font-size:0.9rem; color:#22141c; }
-  .card-footer{ display:flex; gap:8px; justify-content:space-between; align-items:center; }
-  .small{ font-size:0.82rem; color:var(--muted); }
-
-  #toast{ position:fixed; left:50%; transform:translateX(-50%) translateY(20px); bottom:16px; background:var(--accent); color:white; padding:10px 16px; border-radius:10px; opacity:0; pointer-events:none; transition:all .25s ease; z-index:999; }
-  #toast.show{ transform:translateX(-50%) translateY(0); opacity:1; pointer-events:auto; }
-
-  .empty{ color:var(--muted); font-style:italic; }
-
-  @media (max-width:420px){ .controls{ flex-direction:column; align-items:stretch; } header{ flex-direction:column; align-items:flex-start; gap:6px; } .list{ grid-template-columns:1fr; } }
-</style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Prompts by Category</title>
+  <style>
+    :root {
+      --accent: #7a3b58;
+      --accent-light: #ede6eb;
+    }
+    body{
+      margin:0;
+      background:radial-gradient(ellipse at 50% 30%, #291b22 0px, #22141c 100%);
+      padding:18px;
+      -webkit-font-smoothing:antialiased;
+      min-height:100vh;
+      color:#fff; /* Standardtext weiß */
+      font-family: Arial, sans-serif;
+    }
+    h1{ margin:0 0 6px 0; font-size:1.4rem; color:#fff; }
+    p.lead{ margin:0 0 16px 0; color:#ddd; font-size:0.95rem; }
+    .cat-title{ font-weight:800; font-size:1.1rem; color:#fff; margin-top:24px; }
+    .prompt-card{
+      background:var(--accent-light);
+      border-radius:12px;
+      padding:14px;
+      margin:10px 0;
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      box-shadow:0 2px 5px rgba(0,0,0,0.4);
+    }
+    .prompt-text{
+      flex:1;
+      margin-right:10px;
+      color:#000; /* schwarzer Text auf hellem Hintergrund */
+      font-size:0.95rem;
+    }
+    .copy-btn{
+      background:var(--accent);
+      color:#fff;
+      border:none;
+      padding:6px 10px;
+      border-radius:6px;
+      cursor:pointer;
+      font-size:0.85rem;
+    }
+    .copy-btn:hover{
+      background:#5c2d42;
+    }
+    .small{ font-size:0.82rem; color:#ccc; }
+  </style>
 </head>
 <body>
-  <div class="container" role="main">
-    <header>
-      <div>
-        <h1>Prompt Collection — Categorized</h1>
-        <p class="lead">Tap "Copy" to copy the prompt to your clipboard. For reliable copying, host the file via HTTPS (e.g., GitHub Pages).</p>
-      </div>
-    </header>
+  <h1>📋 Prompt Library</h1>
+  <p class="lead">Tippe auf „Copy“, um den Prompt in die Zwischenablage zu kopieren.</p>
 
-    <div class="controls">
-      <input class="search" id="search" placeholder="Search (e.g. 'thickness' or 'outliners')" aria-label="Search prompts" />
-      <select class="filter" id="filter">
-        <option value="">All categories</option>
-      </select>
-      <button class="btn" id="copyAll">Copy all</button>
-      <button class="btn ghost" id="downloadTxt">Download as TXT</button>
-    </div>
-
-    <main id="main">
-      <!-- Categories will be rendered here -->
-    </main>
-
-    <div id="toast" role="status" aria-live="polite">Copied ✓</div>
+  <!-- Kategorie: Analysis of production -->
+  <div class="cat-title">Analysis of production</div>
+  <div class="prompt-card">
+    <div class="prompt-text">Create a list of the top 10 setup scrap of all data.</div>
+    <button class="copy-btn" onclick="copyText(this)">Copy</button>
+  </div>
+  <div class="prompt-card">
+    <div class="prompt-text">Which product reached the highest throughput?</div>
+    <button class="copy-btn" onclick="copyText(this)">Copy</button>
+  </div>
+  <div class="prompt-card">
+    <div class="prompt-text">Create a list of top 10 customer in term of good production.</div>
+    <button class="copy-btn" onclick="copyText(this)">Copy</button>
+  </div>
+  <div class="prompt-card">
+    <div class="prompt-text">Sort all product on this machine categories of their thickness for 0-40, 40-100 and &gt;100µm.</div>
+    <button class="copy-btn" onclick="copyText(this)">Copy</button>
+  </div>
+  <div class="prompt-card">
+    <div class="prompt-text">Whats the average throughput for this machine? Look at all data</div>
+    <button class="copy-btn" onclick="copyText(this)">Copy</button>
+  </div>
+  <div class="prompt-card">
+    <div class="prompt-text">Have there been jobs where the actual job length was more than 10% longer than the set job length?</div>
+    <button class="copy-btn" onclick="copyText(this)">Copy</button>
+  </div>
+  <div class="prompt-card">
+    <div class="prompt-text">Create a list of all downtimes this week.</div>
+    <button class="copy-btn" onclick="copyText(this)">Copy</button>
+  </div>
+  <div class="prompt-card">
+    <div class="prompt-text">Compare the current production with all previous production of the same product. Create a table of all setup times.</div>
+    <button class="copy-btn" onclick="copyText(this)">Copy</button>
   </div>
 
-<script>
-/* --- JavaScript bleibt unverändert, wie du es geliefert hast --- */
-</script>
+  <!-- Kategorie: Analysis of production – More complex -->
+  <div class="cat-title">Analysis of production – More complex</div>
+  <div class="prompt-card">
+    <div class="prompt-text">Create a comparison table comparing days of last week with each other in terms of total good production, total scrap during production, total scrap during setup, total production time and total setup time and amount of jobs produced.</div>
+    <button class="copy-btn" onclick="copyText(this)">Copy</button>
+  </div>
+  <div class="prompt-card">
+    <div class="prompt-text">Create a list of the top ten products produced of all data available, based on the sum of good production. List them in a table. Add columns for the sum of good production kg, film thickness and film width of the product.</div>
+    <button class="copy-btn" onclick="copyText(this)">Copy</button>
+  </div>
+  <div class="prompt-card">
+    <div class="prompt-text">Compare all jobs of last week in a table. Columns shall be setup waste divided by good production amount in percent, total good production amount, 2-sigma thickness tolerance average and average output. Sort them by setup waste.</div>
+    <button class="copy-btn" onclick="copyText(this)">Copy</button>
+  </div>
+
+  <!-- Kategorie: Working outlook in the future of process analysis -->
+  <div class="cat-title">Working outlook in the future of process analysis</div>
+  <div class="prompt-card">
+    <div class="prompt-text">Search yesterdays data for statistical 3-sigma outliners in the actual thickness, actual width and thickness deviation inside.</div>
+    <button class="copy-btn" onclick="copyText(this)">Copy</button>
+  </div>
+  <div class="prompt-card">
+    <div class="prompt-text">Have there been times where the machine was in production status, but the width controller was off?</div>
+    <button class="copy-btn" onclick="copyText(this)">Copy</button>
+  </div>
+  <div class="prompt-card">
+    <div class="prompt-text">Have there been times last week when the machine was in production, but the thickness control was off?</div>
+    <button class="copy-btn" onclick="copyText(this)">Copy</button>
+  </div>
+
+  <!-- Kategorie: For the brave – Special prompt for outliners -->
+  <div class="cat-title">For the brave – Special prompt for outliners</div>
+  <div class="prompt-card">
+    <div class="prompt-text">Search yesterdays data for z-score outliners in the actual thickness, actual width and thickness deviation.</div>
+    <button class="copy-btn" onclick="copyText(this)">Copy</button>
+  </div>
+  <div class="prompt-card">
+    <div class="prompt-text">Search last weeks data for z-score outliners in the actual thickness, actual width and thickness deviation inside. Combine related time periods. Create a table.</div>
+    <button class="copy-btn" onclick="copyText(this)">Copy</button>
+  </div>
+
+  <script>
+    function copyText(button){
+      const text = button.parentElement.querySelector('.prompt-text').innerText;
+      navigator.clipboard.writeText(text).then(()=>{
+        button.innerText = "Copied!";
+        setTimeout(()=> button.innerText = "Copy", 1500);
+      });
+    }
+  </script>
 </body>
 </html>
