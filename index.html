@@ -1,15 +1,16 @@
 <!doctype html>
-<html lang="de">
+<html lang="en">
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>Prompt-Sammlung — Kategorisiert</title>
+<title>Prompt Collection — Categorized</title>
 <style>
   :root{
-    --bg:#f6f7fb;
-    --card:#ffffff;
-    --accent:#2b6ef6;
-    --muted:#6b7280;
+    --bg:#22141c;
+    --bg2:#261a27;
+    --card:#fafafd;
+    --accent:#2a1921;      /* wine/burgundy */
+    --muted:#756070;
     --success:#059669;
     --radius:12px;
     --gap:12px;
@@ -17,37 +18,67 @@
   }
   body{
     margin:0;
-    background:linear-gradient(180deg, var(--bg), #eef2ff);
+    background:radial-gradient(ellipse at 50% 30%, #291b22 0px, #22141c 100%);
     padding:18px;
     -webkit-font-smoothing:antialiased;
+    min-height:100vh;
   }
   .container{
     max-width:1000px;
     margin:0 auto;
   }
   header{ display:flex; gap:12px; align-items:center; margin-bottom:14px; }
-  h1{ margin:0; font-size:1.2rem; }
+  h1{ margin:0; font-size:1.2rem; color:var(--accent);}
   p.lead{ margin:0; color:var(--muted); font-size:0.95rem; }
 
   .controls{ display:flex; gap:8px; margin:12px 0 18px 0; flex-wrap:wrap; }
-  .btn{ background:var(--accent); color:white; border:0; padding:9px 12px; border-radius:10px; font-weight:600; cursor:pointer; }
-  .btn.ghost{ background:transparent; color:var(--accent); border:1px solid rgba(43,110,246,0.12); box-shadow:none; }
-
-  input.search{ padding:10px 12px; border-radius:10px; border:1px solid #e6e9ef; min-width:160px; }
-  select.filter{ padding:10px 12px; border-radius:10px; border:1px solid #e6e9ef; }
+  .btn{ 
+    background:var(--accent); 
+    color:#fff; 
+    border:0; 
+    padding:9px 12px; 
+    border-radius:10px; 
+    font-weight:600; 
+    cursor:pointer;
+    box-shadow: 0 2px 8px rgba(42, 25, 33, 0.08);
+    transition:background 0.2s, color 0.2s;
+  }
+  .btn:hover{ background:#441e2e; }
+  .btn.ghost{ 
+    background:transparent; 
+    color:var(--accent); 
+    border:1px solid rgba(42,25,33,0.15); 
+    box-shadow:none;
+  }
+  .btn.ghost:hover{ background:rgba(42,25,33,0.05);}
+  input.search{ 
+    padding:10px 12px; 
+    border-radius:10px; 
+    border:1px solid #e1e0e4; 
+    min-width:160px;
+    background:#fff;
+    color:#22141c;
+  }
+  select.filter{ 
+    padding:10px 12px; 
+    border-radius:10px; 
+    border:1px solid #e1e0e4; 
+    background:#fff;
+    color:#22141c;
+  }
 
   .category{ margin-bottom:16px; }
   .cat-header{ display:flex; justify-content:space-between; align-items:center; gap:10px; }
-  .cat-title{ font-weight:800; font-size:1rem; }
+  .cat-title{ font-weight:800; font-size:1rem; color:var(--accent);}
   .cat-controls{ display:flex; gap:8px; }
 
   .list{ margin-top:10px; display:grid; grid-template-columns:repeat(auto-fill,minmax(300px,1fr)); gap:12px; }
-  .card{ background:var(--card); border-radius:12px; padding:12px; box-shadow:0 6px 18px rgba(15,23,42,0.04); display:flex; flex-direction:column; gap:8px; }
-  .prompt-text{ white-space:pre-wrap; background:#f3f4f6; padding:10px; border-radius:8px; font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, "Roboto Mono", "Courier New", monospace; font-size:0.9rem; color:#111827; }
+  .card{ background:var(--card); border-radius:12px; padding:12px; box-shadow:0 6px 18px rgba(20,12,16,0.08); display:flex; flex-direction:column; gap:8px; }
+  .prompt-text{ white-space:pre-wrap; background:#ede6eb; padding:10px; border-radius:8px; font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, "Roboto Mono", "Courier New", monospace; font-size:0.9rem; color:#22141c; }
   .card-footer{ display:flex; gap:8px; justify-content:space-between; align-items:center; }
   .small{ font-size:0.82rem; color:var(--muted); }
 
-  #toast{ position:fixed; left:50%; transform:translateX(-50%) translateY(20px); bottom:16px; background:#111827; color:white; padding:10px 16px; border-radius:10px; opacity:0; pointer-events:none; transition:all .25s ease; z-index:999; }
+  #toast{ position:fixed; left:50%; transform:translateX(-50%) translateY(20px); bottom:16px; background:var(--accent); color:white; padding:10px 16px; border-radius:10px; opacity:0; pointer-events:none; transition:all .25s ease; z-index:999; }
   #toast.show{ transform:translateX(-50%) translateY(0); opacity:1; pointer-events:auto; }
 
   .empty{ color:var(--muted); font-style:italic; }
@@ -59,29 +90,29 @@
   <div class="container" role="main">
     <header>
       <div>
-        <h1>Prompt-Sammlung — Kategorisiert</h1>
-        <p class="lead">Tippe auf „Kopieren“, um den Prompt in die Zwischenablage zu kopieren. Hoste die Datei per HTTPS (SharePoint/OneDrive), damit Kopieren zuverlässig funktioniert.</p>
+        <h1>Prompt Collection — Categorized</h1>
+        <p class="lead">Tap "Copy" to copy the prompt to your clipboard. For reliable copying, host the file via HTTPS (e.g., SharePoint/OneDrive).</p>
       </div>
     </header>
 
     <div class="controls">
-      <input class="search" id="search" placeholder="Suche (z. B. 'thickness' oder 'outliners')" aria-label="Suche Prompts" />
+      <input class="search" id="search" placeholder="Search (e.g. 'thickness' or 'outliners')" aria-label="Search prompts" />
       <select class="filter" id="filter">
-        <option value="">Alle Kategorien</option>
+        <option value="">All categories</option>
       </select>
-      <button class="btn" id="copyAll">Alle kopieren</button>
-      <button class="btn ghost" id="downloadTxt">Als TXT herunterladen</button>
+      <button class="btn" id="copyAll">Copy all</button>
+      <button class="btn ghost" id="downloadTxt">Download as TXT</button>
     </div>
 
     <main id="main">
-      <!-- Kategorien werden hier gerendert -->
+      <!-- Categories will be rendered here -->
     </main>
 
-    <div id="toast" role="status" aria-live="polite">Kopiert ✓</div>
+    <div id="toast" role="status" aria-live="polite">Copied ✓</div>
   </div>
 
 <script>
-// PROMPTS: hier die Prompts mit Kategorie
+// PROMPTS: here the prompts
 const PROMPTS = [
   { id:1, category: "Analysis of production", prompt: "Create a list of the top 10 setup scrap of all data." },
   { id:2, category: "Analysis of production", prompt: "Which product reached the highest throughput?" },
@@ -133,7 +164,7 @@ function groupByCategory(prompts){
 
 const toast = document.getElementById('toast');
 let toastTimer = null;
-function showToast(msg="Kopiert ✓"){
+function showToast(msg="Copied ✓"){
   toast.textContent = msg;
   toast.classList.add('show');
   clearTimeout(toastTimer);
@@ -144,7 +175,7 @@ async function copyText(text){
   try{
     if(navigator.clipboard && navigator.clipboard.writeText){
       await navigator.clipboard.writeText(text);
-      showToast('Kopiert ✓');
+      showToast('Copied ✓');
       return true;
     }
     const ta = document.createElement('textarea');
@@ -154,9 +185,9 @@ async function copyText(text){
     ta.select(); ta.setSelectionRange(0, ta.value.length);
     const ok = document.execCommand('copy');
     document.body.removeChild(ta);
-    if(ok){ showToast('Kopiert ✓'); return true; }
+    if(ok){ showToast('Copied ✓'); return true; }
     throw new Error('Copy not supported');
-  }catch(e){ showToast('Kopieren fehlgeschlagen — manuell markieren.'); console.warn(e); return false; }
+  }catch(e){ showToast('Copy failed — select manually.'); console.warn(e); return false; }
 }
 
 function render(prompts){
@@ -167,7 +198,7 @@ function render(prompts){
 
   // populate filter
   const filter = document.getElementById('filter');
-  filter.innerHTML = '<option value="">Alle Kategorien</option>' + categories.map(c => `<option value="${escapeHtml(c)}">${escapeHtml(c)}</option>`).join('');
+  filter.innerHTML = '<option value="">All categories</option>' + categories.map(c => `<option value="${escapeHtml(c)}">${escapeHtml(c)}</option>`).join('');
 
   categories.forEach(cat => {
     const items = grouped.get(cat);
@@ -176,9 +207,9 @@ function render(prompts){
 
     // buttons: expand/collapse, copy category, download category
     const controls = header.querySelector('.cat-controls');
-    const toggle = el('button',{ class:'btn ghost', text:'Ein-/Ausklappen', onclick: (e)=>{ const list = categoryEl.querySelector('.list'); list.style.display = list.style.display === 'none' ? 'grid' : 'none'; } });
-    const copyCat = el('button',{ class:'btn', text:'Kategorie kopieren', onclick: ()=> copyCategory(cat) });
-    const dlCat = el('button',{ class:'btn ghost', text:'Kategorie als TXT', onclick: ()=> downloadCategory(cat) });
+    const toggle = el('button',{ class:'btn ghost', text:'Expand/Collapse', onclick: (e)=>{ const list = categoryEl.querySelector('.list'); list.style.display = list.style.display === 'none' ? 'grid' : 'none'; } });
+    const copyCat = el('button',{ class:'btn', text:'Copy category', onclick: ()=> copyCategory(cat) });
+    const dlCat = el('button',{ class:'btn ghost', text:'Download category as TXT', onclick: ()=> downloadCategory(cat) });
     controls.appendChild(toggle); controls.appendChild(copyCat); controls.appendChild(dlCat);
 
     const list = el('div',{ class:'list' });
@@ -188,8 +219,8 @@ function render(prompts){
       const footer = el('div',{ class:'card-footer' });
       const small = el('div',{ class:'small', text:`ID: ${p.id}` });
       const btns = el('div');
-      const copyBtn = el('button',{ class:'btn', text:'Kopieren', onclick: ()=> copyText(p.prompt) });
-      const shareBtn = el('button',{ class:'btn ghost', text:'Teilen', onclick: ()=> sharePrompt(p) });
+      const copyBtn = el('button',{ class:'btn', text:'Copy', onclick: ()=> copyText(p.prompt) });
+      const shareBtn = el('button',{ class:'btn ghost', text:'Share', onclick: ()=> sharePrompt(p) });
       btns.appendChild(copyBtn); btns.appendChild(shareBtn);
       footer.appendChild(small); footer.appendChild(btns);
       card.appendChild(text); card.appendChild(footer);
@@ -206,14 +237,14 @@ function escapeHtml(s){ return String(s).replace(/[&<>\"']/g, function(c){ retur
 
 async function copyCategory(category){
   const items = PROMPTS.filter(p => p.category === category);
-  if(items.length === 0){ showToast('Keine Prompts in dieser Kategorie'); return; }
+  if(items.length === 0){ showToast('No prompts in this category'); return; }
   const text = items.map(i => i.prompt).join('\n\n');
   await copyText(text);
 }
 
 function downloadCategory(category){
   const items = PROMPTS.filter(p => p.category === category);
-  if(items.length === 0){ alert('Keine Prompts zum Herunterladen in dieser Kategorie.'); return; }
+  if(items.length === 0){ alert('No prompts to download in this category.'); return; }
   const content = items.map(i => `${i.category} - ${i.prompt}\n\n`).join('');
   const blob = new Blob([content], { type: 'text/plain;charset=utf-8' });
   const url = URL.createObjectURL(blob);
@@ -258,11 +289,11 @@ filterSelect.addEventListener('change', (e)=>{
 async function sharePrompt(p){
   const text = `${p.category} - ${p.prompt}`;
   if(navigator.share){
-    try{ await navigator.share({ title: 'Prompt: ' + (p.prompt.slice(0,30) + '...'), text }); showToast('Geteilt ✓'); }
+    try{ await navigator.share({ title: 'Prompt: ' + (p.prompt.slice(0,30) + '...'), text }); showToast('Shared ✓'); }
     catch(e){}
   } else {
     const ok = await copyText(text);
-    if(!ok) alert('Teilen nicht möglich — markiere den Prompt manuell.');
+    if(!ok) alert('Sharing not possible — select the prompt manually.');
   }
 }
 
